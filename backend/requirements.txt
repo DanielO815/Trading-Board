@@ -2,3 +2,4 @@ fastapi
 uvicorn
 truststore
 httpx
+python-dotenv
