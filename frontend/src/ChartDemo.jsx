@@ -12,6 +12,8 @@ import {
 } from "chart.js";
 import api from "./api";
 Chart.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip);
+const API = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+if (!API) throw new Error("VITE_API_BASE is not set");
 
 // Plugin: draw saved and temporary lines from options.plugins.lineDrawer
 const lineDrawer = {
@@ -210,7 +212,7 @@ export default function ChartDemo() {
     setCoinsLoading(true);
     setCoinsErr(null);
     try {
-      const r = await fetch("/api/coins?quote=USD&limit=200");
+      const r = await fetch(`${API}/api/coins?quote=USD&limit=200`);
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
       const d = await r.json();
       setCoins(d.coins ?? []);
@@ -229,8 +231,8 @@ export default function ChartDemo() {
 
     try {
       const [histRes, priceRes] = await Promise.all([
-        fetch(`/api/btc/history?years=${years}`),
-        fetch(`/api/btc/price`),
+        fetch(`${API}/api/btc/history?years=${years}`),
+        fetch(`${API}/api/btc/price`),
       ]);
 
       if (!histRes.ok) throw new Error(`History: ${histRes.status} ${histRes.statusText}`);
@@ -262,7 +264,7 @@ export default function ChartDemo() {
   // Filer Funktionen
   const applyFilter = async () => {
   try {
-    const r = await fetch("/api/filter/coinbase", {
+    const r = await fetch(`${API}/api/filter/coinbase`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -294,7 +296,7 @@ export default function ChartDemo() {
     setShowMA(false);
 
     try {
-      const r = await fetch(`/api/csv/history/${symbol}`);
+      const r = await fetch(`${API}/api/csv/history/${symbol}`);
       if (!r.ok) throw new Error("CSV-Fehler");
 
       const d = await r.json();
@@ -338,7 +340,7 @@ export default function ChartDemo() {
     try {
       const symbols = filteredSortedCoins.map((c) => c.symbol).filter(Boolean);
 
-      const r = await fetch("/api/export/coinbase/start", {
+      const r = await fetch(`${API}/api/export/coinbase/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ symbols, years }),
@@ -349,7 +351,7 @@ export default function ChartDemo() {
 
       const poll = setInterval(async () => {
         try {
-          const s = await fetch(`/api/export/coinbase/status/${job_id}`);
+          const s = await fetch(`${API}/api/export/coinbase/status/${job_id}`);
           const d = await s.json();
           setCbStatus(d);
 
@@ -424,7 +426,7 @@ export default function ChartDemo() {
   const runSavingsSimulation = async () => {
     if (!currentName) return;
 
-    const r = await fetch("/api/simulate/savings", {
+    const r = await fetch(`${API}/api/simulate/savings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -466,7 +468,7 @@ export default function ChartDemo() {
   const runDynamicSavingsSimulation = async () => {
     if (!currentName) return;
 
-    const r = await fetch("/api/simulate/savings_dynamic", {
+    const r = await fetch(`${API}/api/simulate/savings_dynamic`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -719,7 +721,7 @@ export default function ChartDemo() {
           <button
             className="btn"
             onClick={async () => {
-              await fetch("/api/export/coinbase/stop", { method: "POST" });
+              await fetch(`${API}/api/export/coinbase/stop`, { method: "POST" });
             }}
           >
             Export stoppen
