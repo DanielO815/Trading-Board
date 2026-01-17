@@ -10,7 +10,7 @@ import {
   Legend,
   Tooltip,
 } from "chart.js";
-
+import api from "./api";
 Chart.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip);
 
 // Plugin: draw saved and temporary lines from options.plugins.lineDrawer
