@@ -12,7 +12,7 @@ import {
 } from "chart.js";
 import api from "./api";
 Chart.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip);
-const API = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+const API = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 if (!API) throw new Error("VITE_API_BASE is not set");
 
 // Plugin: draw saved and temporary lines from options.plugins.lineDrawer
